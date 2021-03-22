@@ -1,7 +1,7 @@
 import os, sys
 
 
-class cmdHandling(object):
+class cmdHandler(object):
 	"""
 	Handles the users interaction with the shell
 	"""

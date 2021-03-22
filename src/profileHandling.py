@@ -2,7 +2,7 @@ import os, json, sys
 import main
 
 
-class profileHandling(object):
+class profileHandler(object):
 	"""
 	Manages the different mod profiles
 	"""

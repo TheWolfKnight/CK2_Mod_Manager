@@ -1,7 +1,7 @@
 import os, sys, json
 import main
 
-class fileHandling(object):
+class fileHandler(object):
 	"""
 	Handles the creation and managment of base files, not necessarily their contents
 	"""
