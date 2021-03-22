@@ -1,5 +1,4 @@
 import os, json, sys
-import main
 
 
 class profileHandler(object):
@@ -26,7 +25,7 @@ class profileHandler(object):
 				data[profileName] = mods
 				jFile.write(data)
 				jFile.close()
-			return None
+		return None
 
 	def editProfile(self: object, profileName: str, add: list[str] = None, remove: list[str] = None) -> None:
 		"""

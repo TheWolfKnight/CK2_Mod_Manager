@@ -4,14 +4,27 @@ from profileHandling import profileHandler
 from cmdHandling import cmdHandler
 
 
-BASEFILES_CONST = ["profiles.json", "initSettings.json", "initCK2SettingsBackup.txt"]
-CK2PATH_CONST = "%UserProfile%/Documents/Paradox Interactive/Crusader Kings II"
+def readBaseSettings() -> dict:
+	with open("./subFiles/initSettings.json", 'r') as r:
+		data = json.load(r.read())
+	return data
 
+def setFRF() -> None:
+	with open("./subFiles/initSettings.json", 'w') as w:
+		with open("./subFiles/initSettings.json", 'r') as r:
+			data = json.load(r.read())
+			data["firstRunPath"] = False
+			r.close()
+		json.dump(data, w)
+		w.close()
+	return None
 
 def onOpne() -> None:
-	baseFileHandler = fileHandler()
-	baseFileHandler.baseFileHandler()
-	baseFileHandler.writeBaseData()
+	settings = readBaseSettings()
+	if (settings["firstRunFlag"]):
+		baseFileHandler = fileHandler(settings["ck2path"])
+		baseFileHandler.baseFileHandler()
+		setFRF()
 
 
 def main():
