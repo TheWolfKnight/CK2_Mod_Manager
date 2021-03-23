@@ -2,6 +2,9 @@ import os, json
 
 
 class CK2Handler(object):
+	"""
+	Handles the writing to CK2's settings.txt
+	"""
 	def __init__(self: object, ck2path: str, mods: list[str]):
 		self.ck2path: str = ck2path
 		self.mods: list[str] = mods
@@ -16,7 +19,7 @@ class CK2Handler(object):
 		return None
 
 	def _createModString(self: object) -> str:
-		res = "{\n\t"
+		res: str = "{"
 		for mod in self.mods:
 			if (mod != self.mods[-1]):
 				res += mod+" "

@@ -1,8 +1,6 @@
 import os, json, sys
 from fileHandling import fileHandler
-from profileHandling import profileHandler
 from cmdHandling import cmdHandler
-from ck2FileHandling import CK2Handler
 
 
 CK2PATH: str
@@ -29,7 +27,7 @@ def setFRF() -> None:
 
 def onOpne() -> None:
 	settings, initPressent = readBaseSettings()
-	if ((settings["firstRunFlag"] is None) or not settings["firstRunFlag"] or not initPressent):
+	if ((settings is None) or not settings["firstRunFlag"] or not initPressent):
 		CK2PATH = settings["ck2path"]
 		baseFileHandler = fileHandler(CK2PATH)
 		baseFileHandler.baseFileHandler()
@@ -39,10 +37,18 @@ def onOpne() -> None:
 		CK2PATH = settings["ck2path"]
 		return None
 
-def main():
-	onOpne()
+def main() -> None:
+	# onOpne()
+	cmd = cmdHandler()
+	cmd.getCommand()
+	return None
 
 
 if __name__ == "__main__":
-	main()
+	try:
+		main()
+	except KeyboardInterrupt:
+		print("Shutting down")
+	except EOFError:
+		print("Shutting down")
 	sys.exit()
