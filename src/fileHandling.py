@@ -9,7 +9,7 @@ class fileHandler(object):
 	Handles the creation and managment of base files, not necessarily their contents
 	"""
 	def __init__(self: object, path: str):
-		self.path = path
+		self.path: str = path
 
 	def baseFileHandler(self: object) -> None:
 		"""
@@ -18,8 +18,8 @@ class fileHandler(object):
 		:return: Unknown
 		"""
 		for file in BASEFILES_CONST:
-			if (not os.path.exists(f"./subFiles/{file}")):
-				open(f"./subFiles/{file}", 'x')
+			if (not os.path.exists(f"../bin/{file}")):
+				open(f"../bin/{file}", 'x')
 		self._writeBaseData()
 		return None
 
@@ -42,7 +42,7 @@ class fileHandler(object):
 		:param self: object\n
 		:return: list
 		"""
-		res = []
+		res: list = []
 		for _, _,file in os.walk(f"{self.path}/mod"):
 			if (file.endswith('.mod')):
 				res.append(file)
@@ -54,7 +54,7 @@ class fileHandler(object):
 		:param self: object\n
 		:return: None
 		"""
-		with open(f"./subFiles/{BASEFILES_CONST[3]}", 'a') as w:
+		with open(f"../bin/{BASEFILES_CONST[3]}", 'a') as w:
 			with open(f"{self.path}/settings.txt", 'r') as r:
 				w.write(r.read())
 				r.close()
@@ -67,8 +67,8 @@ class fileHandler(object):
 		:param self: object\n
 		:return: None
 		"""
-		with open(f"./subFiles/{BASEFILES_CONST[2]}", 'w') as jFile:
-			data = {
+		with open(f"../bin/{BASEFILES_CONST[2]}", 'w') as jFile:
+			data: dict = {
 				"firtRunFlag": False,
 				"ck2path": "%UserProfile%/Documents/Paradox Interactive/Crusader Kings II"
 			}

@@ -4,14 +4,21 @@ from profileHandling import profileHandler
 from cmdHandling import cmdHandler
 
 
-def readBaseSettings() -> dict:
-	with open("./subFiles/initSettings.json", 'r') as r:
-		data = json.load(r.read())
-	return data
+CK2PATH: str
+
+
+def readBaseSettings():
+	if (os.path.isfile("../bin/initSettings.json")):
+		with open("../bin/initSettings.json", 'r') as r:
+			data: dict = json.load(r.read())
+			r.close()
+		return data, True
+	else:
+		return None, False
 
 def setFRF() -> None:
-	with open("./subFiles/initSettings.json", 'w') as w:
-		with open("./subFiles/initSettings.json", 'r') as r:
+	with open("../bin/initSettings.json", 'w') as w:
+		with open("../bin/initSettings.json", 'r') as r:
 			data = json.load(r.read())
 			data["firstRunPath"] = False
 			r.close()
@@ -20,12 +27,16 @@ def setFRF() -> None:
 	return None
 
 def onOpne() -> None:
-	settings = readBaseSettings()
-	if (settings["firstRunFlag"]):
-		baseFileHandler = fileHandler(settings["ck2path"])
+	settings, initPressent = readBaseSettings()
+	if ((settings["firstRunFlag"] is None) or not settings["firstRunFlag"] or not initPressent):
+		CK2PATH = settings["ck2path"]
+		baseFileHandler = fileHandler(CK2PATH)
 		baseFileHandler.baseFileHandler()
 		setFRF()
-
+		return None
+	else:
+		CK2PATH = settings["ck2path"]
+		return None
 
 def main():
 	onOpne()

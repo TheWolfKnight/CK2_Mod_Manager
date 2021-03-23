@@ -11,9 +11,9 @@ class cmdHandler(object):
 	Handles the users interaction with the shell
 	"""
 	def __init__(self: object):
-		self.uInput
-		self.breakFlag = False
-		self.mainLoopFlag = True
+		self.uInput: str
+		self.breakFlag: bool = False
+		self.mainLoopFlag: bool = True
 
 	def getCommand(self: object) -> None:
 		while True:

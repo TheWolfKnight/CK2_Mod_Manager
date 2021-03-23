@@ -12,18 +12,18 @@ class profileHandler(object):
 		:param mods: list[str], list of mods for the new profile\n
 		:return: None
 		"""
-		with open("./subFiles/profiles.json", 'r') as jFile:
-			data = json.load(jFile)
+		with open("../bin/profiles.json", 'r') as jFile:
+			data: dict = json.load(jFile)
 			jFile.close()
 
-		with open("./subFiles/profiles.json", 'w') as jFile:
+		with open("../bin/profiles.json", 'w') as jFile:
 			if (profileName in data["present"]):
 				print("Already a profile by that name, could not create a new profile")
 				jFile.close()
 			else:
 				data["present"] += [profileName]
 				data[profileName] = mods
-				jFile.write(data)
+				json.dump(data, jFile)
 				jFile.close()
 		return None
 
@@ -35,18 +35,18 @@ class profileHandler(object):
 		:param remove (optional): list[str], mods to remove from profile\n
 		:return: None
 		"""
-		with open("./subFiles/profiles.json", 'r') as jFile:
-			data = json.load(jFile)
+		with open("../bin/profiles.json", 'r') as jFile:
+			data: dict = json.load(jFile)
 			jFile.close()
 
-		with open("./subFiles/profiles.json", 'w') as jFile:
+		with open("../bin/profiles.json", 'w') as jFile:
 			if (remove):
 				for item in data[profileName]:
 					if (item in remove):
 						data[profileName].remove(item)
 			if (add):
 				data[profileName] += add
-			jFile.write(data)
+			json.dump(data, jFile)
 			jFile.close()
 		return None
 
@@ -57,15 +57,15 @@ class profileHandler(object):
 		:return: None
 		"""
 		res = {}
-		with open("./subFiles/profiles.json", 'r') as jFile:
-			data = json.load(jFile)
+		with open("../bin/profiles.json", 'r') as jFile:
+			data: dict = json.load(jFile)
 			jFile.close()
 
-		with open("./subFiles/profiles.json", 'w') as jFile:
+		with open("../bin/profiles.json", 'w') as jFile:
 			keys = data.keys()
 			keys.remove(profileName)
 			for key in keys:
 				res[key] = data[key]
-			jFile.write(res)
+			json.dump(res, jFile)
 			jFile.close()
 		return None
