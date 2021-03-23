@@ -2,12 +2,13 @@ import os, json, sys
 from fileHandling import fileHandler
 from profileHandling import profileHandler
 from cmdHandling import cmdHandler
+from ck2FileHandling import CK2Handler
 
 
 CK2PATH: str
 
 
-def readBaseSettings():
+def readBaseSettings() -> dict and bool:
 	if (os.path.isfile("../bin/initSettings.json")):
 		with open("../bin/initSettings.json", 'r') as r:
 			data: dict = json.load(r.read())

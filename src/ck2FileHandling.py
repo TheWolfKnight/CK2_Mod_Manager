@@ -1,9 +1,11 @@
-import os, sys, json
+import os, json
+
 
 class CK2Handler(object):
 	def __init__(self: object, ck2path: str, mods: list[str]):
 		self.ck2path: str = ck2path
 		self.mods: list[str] = mods
+		self._mkTempBinFile()
 
 	def _mkTempBinFile(self:object) -> None:
 		open("../bin/tempSettings.txt", 'x')
@@ -27,7 +29,7 @@ class CK2Handler(object):
 		modLine: int = None
 		count: int = 0
 		with open("../bin/tempSettings.txt", 'a') as w:
-			with open(f"{self.ck2path}/settings.txt") as r:
+			with open(f"{self.ck2path}/settings.txt", 'r') as r:
 				for line in r.readlines():
 					if (modLine is not None):
 						if (count <= modLine+3):
@@ -44,7 +46,15 @@ class CK2Handler(object):
 						w.write(line)
 						count += 1
 						continue
+				r.close()
+			w.close()
 		return None
 
 	def writeProfile(self: object) -> None:
+		with open(f"{self.ck2path}/settings.txt", 'w') as w:
+			with open("../bin/tempSettings.txt", 'r') as r:
+				w.write(r.reade())
+				r.close()
+			w.close()
+		self._rmTempBinFile()
 		return None

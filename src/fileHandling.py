@@ -1,4 +1,4 @@
-import os, sys, json
+import os, json
 
 
 BASEFILES_CONST = ["profiles.json", "initSettings.json", "initCK2SettingsBackup.txt"]

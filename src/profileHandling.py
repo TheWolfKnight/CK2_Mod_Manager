@@ -1,4 +1,4 @@
-import os, json, sys
+import os, json
 
 
 class profileHandler(object):
