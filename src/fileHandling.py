@@ -31,9 +31,14 @@ class fileHandler(object):
 		:return: list
 		"""
 		res: list = []
-		for _, _,file in os.walk(f"{self.path}/mod"):
-			if (file.endswith('.mod')):
-				res.append(file)
+		mods: list
+		# Need to do this becouse os.walk returns a list
+		# but does not itterrate over it
+		for _, _, file in os.walk(f"{self.path}/mod"):
+			mods = file
+		for mod in mods:
+			if (mod.endswith('.mod')):
+				res.append(mod)
 		return res
 
 	def _writeBaseData(self: object) -> None:

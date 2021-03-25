@@ -27,9 +27,8 @@ class cmdHandler(object):
 			if (self.breakFlag):
 				print("Closing Program")
 				break
-			if (self.mainLoopFlag):
-				print(INFOMESSAGE)
-			self.uInput = input("> ")
+			print(INFOMESSAGE)
+			self.uInput = input("> ").lower()
 			self._commandHandling()
 		return None
 
@@ -39,13 +38,18 @@ class cmdHandler(object):
 		:param self: object\n
 		:return: None
 		"""
-		self.uInput = self.uInput.lower()
 		if (self.uInput == "quit"):
 			self.breakFlag = True
 		elif (self.uInput == "profile"):
-			pass
+			while True:
+				self.uInput = input("> ").lower()
+				if (self.uInput == "quit"):
+					break
 		elif (self.uInput == "Commit"):
-			pass
+			while True:
+				self.uInput = input("> ").lower()
+				if (self.uInput == "quit"):
+					break
 		else:
 			print(f"\"{self.uInput}\" is not a command")
 		return None
@@ -59,7 +63,14 @@ class _modFileSubClass(object):
 	Internal mod handling for cmdHandler, used when listing mods
 	"""
 	def _modFileShow(self: object, mods: list[str]) -> None:
-		pass
+		"""
+		Prints the currently downlaoded mod files from the ck2 path
+		:param self: object
+		"""
+		for mod in mods:
+			printStr = mod[:mod.index(".mod")]
+			print(f"{printStr}\n")
+		return None
 
 
 class _commitSubClass(object):
@@ -70,11 +81,17 @@ class _commitSubClass(object):
 		self.profile = uInput
 		pass
 
-	def _getProfileMods(self: object) -> None:
+	def _getProfileMods(self: object) -> list[str]:
+		"""
+		Gets the mods from a specific profile\n
+		:param self: object\n
+		:return: list[str]
+		"""
 		with open("../bin/profiles.json", 'r') as r:
 			data = json.load(r)
-			internalProfile = data[self.profile]
-			pass
+			profileMods = data[self.profile]
+			r.close()
+		return profileMods
 
 
 class _settingsSubClass(object):
