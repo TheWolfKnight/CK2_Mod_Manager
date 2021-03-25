@@ -6,7 +6,7 @@ from cmdHandling import cmdHandler
 CK2PATH: str
 
 
-def readBaseSettings() -> dict and bool:
+def readBaseSettings() -> (dict, bool):
 	if (os.path.isfile("../bin/initSettings.json")):
 		with open("../bin/initSettings.json", 'r') as r:
 			data: dict = json.load(r.read())

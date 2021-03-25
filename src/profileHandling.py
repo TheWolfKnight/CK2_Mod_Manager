@@ -19,9 +19,10 @@ class profileHandler(object):
 		with open("../bin/profiles.json", 'w') as jFile:
 			if (profileName in data["present"]):
 				print("Already a profile by that name, could not create a new profile")
+				json.dump(data, jFile)
 				jFile.close()
 			else:
-				data["present"] += [profileName]
+				data["present"].append(profileName)
 				data[profileName] = mods
 				json.dump(data, jFile)
 				jFile.close()
@@ -45,7 +46,12 @@ class profileHandler(object):
 					if (item in remove):
 						data[profileName].remove(item)
 			if (add):
-				data[profileName] += add
+				for mod in add:
+					try:
+						data[profileName].index(mod)
+						continue
+					except ValueError:
+						data[profileName].append(mod)
 			json.dump(data, jFile)
 			jFile.close()
 		return None
@@ -58,14 +64,21 @@ class profileHandler(object):
 		"""
 		res = {}
 		with open("../bin/profiles.json", 'r') as jFile:
-			data: dict = json.load(jFile)
+			data = json.load(jFile)
 			jFile.close()
 
+		try:
+			data["present"].index(profileName)
+		except ValueError:
+			print("No profile by that name")
+			return None
+
 		with open("../bin/profiles.json", 'w') as jFile:
-			keys = data.keys()
+			keys = list(data.keys())
 			keys.remove(profileName)
 			for key in keys:
 				res[key] = data[key]
+			res["present"].remove(profileName)
 			json.dump(res, jFile)
 			jFile.close()
 		return None

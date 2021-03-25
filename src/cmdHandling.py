@@ -61,11 +61,12 @@ class _modFileSubClass(object):
 	def _modFileShow(self: object, mods: list[str]) -> None:
 		pass
 
+
 class _commitSubClass(object):
 	"""
 	Internal commitment handler for cmdHandler, used when writing profiles to setting.txt
 	"""
-	def _parseUserInput(self: object, uInput: str):
+	def _parseUserInput(self: object, uInput: str) -> list[str]:
 		self.profile: str
 		pass
 
@@ -74,3 +75,7 @@ class _commitSubClass(object):
 			data: dict = json.load(r)
 			profile = data[self.profile]
 			pass
+
+
+class _settingsSubClass(object):
+	pass

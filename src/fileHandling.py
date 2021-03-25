@@ -9,7 +9,8 @@ class fileHandler(object):
 	Handles the creation and managment of base files, not necessarily their contents
 	"""
 	def __init__(self: object, path: str):
-		self.path: str = path
+		self.path = path
+		self.BckUpHandler = _BackupHandler(path)
 
 	def baseFileHandler(self: object) -> None:
 		"""
@@ -21,19 +22,6 @@ class fileHandler(object):
 			if (not os.path.exists(f"../bin/{file}")):
 				open(f"../bin/{file}", 'x')
 		self._writeBaseData()
-		return None
-
-	def _writeBaseData(self: object) -> None:
-		"""
-		Writes the base data for the different files\n
-		:param self: object\n
-		:retun: None
-		"""
-		for file in BASEFILES_CONST:
-			if (file == "initSetting.json"):
-				self._createInitSettings()
-			if (file == "initCK2SettingsBackup.txt"):
-				self._backupBaseSettings()
 		return None
 
 	def findMods(self: object) -> list[str]:
@@ -48,17 +36,42 @@ class fileHandler(object):
 				res.append(file)
 		return res
 
+	def _writeBaseData(self: object) -> None:
+		"""
+		Writes the base data for the different files\n
+		:param self: object\n
+		:retun: None
+		"""
+		for file in BASEFILES_CONST:
+			if (file == "initSettings.json"):
+				print("initSettings")
+				self.BckUpHandler._createInitSettings()
+			if (file == "initCK2SettingsBackup.txt"):
+				print("InitCK2Backup")
+				self.BckUpHandler._backupBaseSettings()
+			if (file == "profiles.json"):
+				print("profiles")
+				self.BckUpHandler._profilesInitSettings()
+		return None
+
+class _BackupHandler(object):
+	"""
+	Handles the backup functions for fileHandling
+	"""
+	def __init__(self: object, ckpath: str):
+		self.path: str = ckpath
+
 	def _backupBaseSettings(self: object) -> None:
 		"""
 		Creates an backup of the actual settings.txt from CK2\n
 		:param self: object\n
 		:return: None
 		"""
-		with open(f"../bin/{BASEFILES_CONST[3]}", 'a') as w:
+		with open(f"../bin/{BASEFILES_CONST[2]}", 'a') as w:
 			with open(f"{self.path}/settings.txt", 'r') as r:
 				w.write(r.read())
 				r.close()
-			w.closed()
+			w.close()
 		return None
 
 	def _createInitSettings(self: object) -> None:
@@ -67,10 +80,24 @@ class fileHandler(object):
 		:param self: object\n
 		:return: None
 		"""
-		with open(f"../bin/{BASEFILES_CONST[2]}", 'w') as jFile:
-			data: dict = {
+		with open(f"../bin/{BASEFILES_CONST[1]}", 'w') as jFile:
+			data = {
 				"firtRunFlag": False,
-				"ck2path": "%UserProfile%/Documents/Paradox Interactive/Crusader Kings II"
+				"ck2path": "../tmp"
+			}
+			json.dump(data, jFile)
+			jFile.close()
+		return None
+
+	def _profilesInitSettings(self: object) -> None:
+		"""
+		Creates the initial setting for the profiles\n
+		:param self: object\n
+		:return: None
+		"""
+		with open(f"../bin/{BASEFILES_CONST[0]}", 'w') as jFile:
+			data = {
+				"present": []
 			}
 			json.dump(data, jFile)
 			jFile.close()

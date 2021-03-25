@@ -6,7 +6,7 @@ class CK2Handler(object):
 	Handles the writing to CK2's settings.txt
 	"""
 	def __init__(self: object, ck2path: str, mods: list[str]):
-		self.ck2path: str = ck2path
+		self.path: str = ck2path
 		self.mods: list[str] = mods
 		self._mkTempBinFile()
 
@@ -19,26 +19,28 @@ class CK2Handler(object):
 		return None
 
 	def _createModString(self: object) -> str:
-		res: str = "{"
+		res: str = "{\n\t"
 		for mod in self.mods:
 			if (mod != self.mods[-1]):
-				res += mod+" "
+				res += f"\"mod/{mod}\" "
 			else:
-				res += mod+"\n"
-		res += "}"
+				res += f"\"mod/{mod}\"\n"
+		res += "}\n"
 		return res
 
 	def _writeTemp(self: object) -> None:
 		modLine: int = None
 		count: int = 0
 		with open("../bin/tempSettings.txt", 'a') as w:
-			with open(f"{self.ck2path}/settings.txt", 'r') as r:
+			with open(f"{self.path}/settings.txt", 'r') as r:
 				for line in r.readlines():
 					if (modLine is not None):
 						if (count <= modLine+3):
+							print("skip")
 							count += 1
 							continue
-					if (line == "last_mods="):
+					if (line == "last_mods=\n"):
+						print("last_mods reached")
 						w.write(line)
 						modLine = self._createModString()
 						w.write(modLine)
@@ -46,6 +48,7 @@ class CK2Handler(object):
 						count += 1
 						continue
 					else:
+						print("write normal line")
 						w.write(line)
 						count += 1
 						continue
@@ -54,9 +57,10 @@ class CK2Handler(object):
 		return None
 
 	def writeProfile(self: object) -> None:
-		with open(f"{self.ck2path}/settings.txt", 'w') as w:
+		self._writeTemp()
+		with open(f"{self.path}/settings.txt", 'w') as w:
 			with open("../bin/tempSettings.txt", 'r') as r:
-				w.write(r.reade())
+				w.write(r.read())
 				r.close()
 			w.close()
 		self._rmTempBinFile()
