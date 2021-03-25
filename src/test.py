@@ -1,13 +1,14 @@
 import os, sys
-
+from cmdHandling import _modFileSubClass
+from fileHandling import fileHandler
 
 def main():
-	files: list
-	for _, _, file in os.walk("../tmp/"):
-		files = file
-	for file in files:
-		if (file.endswith(".mod")):
-			(file.index(".mod"))
+	fHandler = fileHandler(r"C:\Users\sys_admin\Documents\Paradox Interactive\Crusader Kings II")
+	cHandler = _modFileSubClass()
+
+	l_str = fHandler.findMods()
+	cHandler._modFileShow(l_str)
+
 
 if __name__ == "__main__":
 	main()

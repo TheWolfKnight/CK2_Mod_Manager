@@ -3,7 +3,7 @@ from ck2FileHandling import CK2Handler
 from profileHandling import profileHandler
 
 
-INFOMESSAGE = """Profile - open profile editor\nCommit - Enable a profile\nquit - closes the program"""
+INFOMESSAGE = """Profile - open profile editor\nCommit - Enable a profile\nSettings - Change setting for the program\nquit - closes the program"""
 
 
 class cmdHandler(object):
@@ -13,7 +13,8 @@ class cmdHandler(object):
 	def __init__(self: object):
 		self.fileClassHandler = _modFileSubClass()
 		self.commitClassHandler = _commitSubClass()
-		self.uInput
+		self.settingsClassHandler = _settingsSubClass()
+		self.uInput: str
 		self.breakFlag = False
 		self.mainLoopFlag = True
 
@@ -64,12 +65,14 @@ class _modFileSubClass(object):
 	"""
 	def _modFileShow(self: object, mods: list[str]) -> None:
 		"""
-		Prints the currently downlaoded mod files from the ck2 path
-		:param self: object
+		Prints the currently downlaoded mod files from the ck2 path\n
+		:param self: object\n
+		:return: None
 		"""
 		for mod in mods:
-			printStr = mod[:mod.index(".mod")]
-			print(f"{printStr}\n")
+			if (mod is not None):
+				printStr = mod[:mod.index(".mod")]
+				print(f"{printStr}")
 		return None
 
 

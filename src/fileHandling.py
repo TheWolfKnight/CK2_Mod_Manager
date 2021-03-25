@@ -28,17 +28,15 @@ class fileHandler(object):
 		"""
 		Walks trough the CK2 mod folder and findes all .mod files, add them to a list and return them\n
 		:param self: object\n
-		:return: list
+		:return: list[str]
 		"""
 		res: list = []
-		mods: list
-		# Need to do this becouse os.walk returns a list
-		# but does not itterrate over it
+		files: list
 		for _, _, file in os.walk(f"{self.path}/mod"):
-			mods = file
-		for mod in mods:
-			if (mod.endswith('.mod')):
-				res.append(mod)
+			files = file
+		for file in files:
+			if (file.endswith(".mod")):
+				res.append(file)
 		return res
 
 	def _writeBaseData(self: object) -> None:
