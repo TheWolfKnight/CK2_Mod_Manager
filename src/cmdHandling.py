@@ -13,9 +13,9 @@ class cmdHandler(object):
 	def __init__(self: object):
 		self.fileClassHandler = _modFileSubClass()
 		self.commitClassHandler = _commitSubClass()
-		self.uInput: str
-		self.breakFlag: bool = False
-		self.mainLoopFlag: bool = True
+		self.uInput
+		self.breakFlag = False
+		self.mainLoopFlag = True
 
 	def getCommand(self: object) -> None:
 		"""
@@ -67,15 +67,18 @@ class _commitSubClass(object):
 	Internal commitment handler for cmdHandler, used when writing profiles to setting.txt
 	"""
 	def _parseUserInput(self: object, uInput: str) -> list[str]:
-		self.profile: str
+		self.profile = uInput
 		pass
 
-	def _getProfileMods(self: object):
+	def _getProfileMods(self: object) -> None:
 		with open("../bin/profiles.json", 'r') as r:
-			data: dict = json.load(r)
-			profile = data[self.profile]
+			data = json.load(r)
+			internalProfile = data[self.profile]
 			pass
 
 
 class _settingsSubClass(object):
+	"""
+	Internal settings handler for the cmdHandler, used when changing settings in initSettings.json
+	"""
 	pass

@@ -11,14 +11,29 @@ class CK2Handler(object):
 		self._mkTempBinFile()
 
 	def _mkTempBinFile(self:object) -> None:
+		"""
+		Makes a temp file to store the changes befor commitment\n
+		:param self: object\n
+		:return: None
+		"""
 		open("../bin/tempSettings.txt", 'x')
 		return None
 
 	def _rmTempBinFile(self: object) -> None:
+		"""
+		Removes the temp file after commitment\n
+		:param self: object\n
+		:return: None
+		"""
 		os.remove("../bin/tempSettings.txt")
 		return None
 
 	def _createModString(self: object) -> str:
+		"""
+		Used to make the string for the active mods\n
+		:param self: object\n
+		:return: str
+		"""
 		res: str = "{\n\t"
 		for mod in self.mods:
 			if (mod != self.mods[-1]):
@@ -29,6 +44,11 @@ class CK2Handler(object):
 		return res
 
 	def _writeTemp(self: object) -> None:
+		"""
+		Writes the data for the temp file\n
+		:param self: object\n
+		:return: None
+		"""
 		modLine: int = None
 		count: int = 0
 		with open("../bin/tempSettings.txt", 'a') as w:
@@ -57,6 +77,11 @@ class CK2Handler(object):
 		return None
 
 	def writeProfile(self: object) -> None:
+		"""
+		Writes the data in the temp file to the settings file for CK2\n
+		:param self: object\n
+		:return: None
+		"""
 		self._writeTemp()
 		with open(f"{self.path}/settings.txt", 'w') as w:
 			with open("../bin/tempSettings.txt", 'r') as r:
