@@ -13,7 +13,7 @@ class profileHandler(object):
 		:return: None
 		"""
 		with open("../bin/profiles.json", 'r') as jFile:
-			data: dict = json.load(jFile)
+			data = json.load(jFile)
 			jFile.close()
 
 		with open("../bin/profiles.json", 'w') as jFile:
@@ -37,7 +37,7 @@ class profileHandler(object):
 		:return: None
 		"""
 		with open("../bin/profiles.json", 'r') as jFile:
-			data: dict = json.load(jFile)
+			data = json.load(jFile)
 			jFile.close()
 
 		with open("../bin/profiles.json", 'w') as jFile:
@@ -56,11 +56,11 @@ class profileHandler(object):
 			jFile.close()
 		return None
 
-	def deleteProfile(self: object, profileName: str) -> None:
+	def deleteProfile(self: object, profileName: str) -> bool:
 		"""
 		Deletes a profile from the profiles.json file\n
 		:param profileName: str, the name of the profile to be deleted\n
-		:return: None
+		:return: True if (success) else false
 		"""
 		res = {}
 		with open("../bin/profiles.json", 'r') as jFile:
@@ -71,7 +71,7 @@ class profileHandler(object):
 			data["present"].index(profileName)
 		except ValueError:
 			print("No profile by that name")
-			return None
+			return False
 
 		with open("../bin/profiles.json", 'w') as jFile:
 			keys = list(data.keys())
@@ -81,4 +81,4 @@ class profileHandler(object):
 			res["present"].remove(profileName)
 			json.dump(res, jFile)
 			jFile.close()
-		return None
+		return True
