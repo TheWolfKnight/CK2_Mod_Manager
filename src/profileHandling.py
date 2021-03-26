@@ -1,6 +1,15 @@
 import os, json
 
 
+class Error(Exception):
+	def __init__(self: object, string: str):
+		self.string = string
+	
+	def asString(self:object):
+		result = f"No profile by name {self.string}"
+		return result
+
+
 class profileHandler(object):
 	"""
 	Manages the different mod profiles
@@ -40,6 +49,11 @@ class profileHandler(object):
 			data = json.load(jFile)
 			jFile.close()
 
+		try:
+			data["present"].index(profileName)
+		except ValueError:
+			raise self.InvalidProfileError(profileName)
+
 		with open("../bin/profiles.json", 'w') as jFile:
 			if (remove):
 				for item in data[profileName]:
@@ -56,7 +70,7 @@ class profileHandler(object):
 			jFile.close()
 		return None
 
-	def deleteProfile(self: object, profileName: str) -> bool:
+	def deleteProfile(self: object, profileName: str) -> None:
 		"""
 		Deletes a profile from the profiles.json file\n
 		:param profileName: str, the name of the profile to be deleted\n
@@ -71,7 +85,7 @@ class profileHandler(object):
 			data["present"].index(profileName)
 		except ValueError:
 			print("No profile by that name")
-			return False
+			raise self.InvalidProfileError(profileName)
 
 		with open("../bin/profiles.json", 'w') as jFile:
 			keys = list(data.keys())
@@ -81,4 +95,8 @@ class profileHandler(object):
 			res["present"].remove(profileName)
 			json.dump(res, jFile)
 			jFile.close()
-		return True
+		return None
+
+	class InvalidProfileError(Error):
+		def __init__(self: object, string: str):
+			super().__init__(string)

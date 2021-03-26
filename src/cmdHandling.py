@@ -175,22 +175,25 @@ class _profileSubClass(object):
 				print(f"{key}: {mod}")
 			print("Syntax: add/remove 1, 2, 3")
 			uInput = input("Profile >>> ").lower()
-			if (uInput == "quit"):
-				break
-			elif (uInput == "add"):
-				selectedmods = uInput.remove(2).strip().split(',')
-				for mod in selectedmods:
-					res.append(mod)
-				self.profileH.editProfile(profileName, add=selectedmods)
-				res = []
-			elif (uInput == "remove"):
-				selectedmods = uInput.remove(2).strip().split(',')
-				for mod in selectedmods:
-					res.append(mod)
-				self.profileH.editProfile(profileName, remove=selectedmods)
-				res = []
-			else:
-				print("Invalid input")
+			try:
+				if (uInput == "quit"):
+					break
+				elif (uInput == "add"):
+					selectedmods = uInput.remove(2).strip().split(',')
+					for mod in selectedmods:
+						res.append(mod)
+					self.profileH.editProfile(profileName, add=selectedmods)
+					res = []
+				elif (uInput == "remove"):
+					selectedmods = uInput.remove(2).strip().split(',')
+					for mod in selectedmods:
+						res.append(mod)
+					self.profileH.editProfile(profileName, remove=selectedmods)
+					res = []
+				else:
+					print("Invalid input")
+			except self.profileH.InvalidProfileError as e:
+				print(e.asString())
 		return None
 
 	def deleteProfile(self: object, profileName: str) -> None:
@@ -200,8 +203,9 @@ class _profileSubClass(object):
 		:param profileName: str\n
 		:return: None
 		"""
-		if (self.profileH.deleteProfile(profileName)):
+		try:
+			self.profileH.deleteProfile(profileName)
 			print(f"{profileName} has been deleted")
-		else:
-			print(f"failed to delete profile: {profileName}")
+		except self.profileH.InvalidProfileError as e:
+			print(e.asString())
 		return None
