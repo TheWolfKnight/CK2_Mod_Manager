@@ -1,4 +1,4 @@
-import os, json
+import os, json, misc
 from ck2FileHandling import CK2Handler
 from profileHandling import profileHandler
 
@@ -10,11 +10,12 @@ class cmdHandler(object):
 	"""
 	Handles the users interaction with the shell
 	"""
-	def __init__(self: object):
+	def __init__(self: object, gamePath: str):
 		self.fileClassHandler = _modFileSubClass()
-		self.commitClassHandler = _commitSubClass()
+		self.commitClassHandler = _commitSubClass(gamePath)
 		self.settingsClassHandler = _settingsSubClass()
-		self.profileClassHandler = _profileSubClass()
+		self.profileClassHandler = _profileSubClass(gamePath)
+		self.path = gamePath
 		self.uInput: str
 		self.breakFlag = False
 		self.mainLoopFlag = True
@@ -43,9 +44,10 @@ class cmdHandler(object):
 		if (self.uInput == "quit"):
 			self.breakFlag = True
 		elif (self.uInput == "profile"):
+			print("Create Profile <Name> - Make a new profile\nEdit Profile <Name> - eddit a profile\nDelete Profile <Name> - Deletes a profile\nquit - Goes back")
 			while True:
 				# Profile scope
-				self.uInput = input("> ").lower()
+				self.uInput = input(">>> ").lower()
 				token = self.uInput.split(" ")
 				if (self.uInput == "quit"):
 					break
@@ -55,14 +57,23 @@ class cmdHandler(object):
 					self.profileClassHandler.editProfile(token[2])
 				elif (token[0] == "delete" and token[1] == "profile"):
 					self.profileClassHandler.deleteProfile(token[2])
+				elif (token[0] == "show" and token[1] == "profile"):
+					self.profileClassHandler.showProfile()
 				else:
 					print("Invalid input")
 		elif (self.uInput == "commit"):
 			while True:
 				# Commit Scope
 				self.uInput = input("> ").lower()
+				token = self.uInput.split(' ')
 				if (self.uInput == "quit"):
 					break
+				elif (token[0] == "commit"):
+					self.commitClassHandler.commitProfile(token[1], self.path)
+				elif (token[0] == "show" and token[1] == "profile"):
+					self.profileClassHandler.showProfile()
+				else:
+					print("Invalid input")
 		elif (self.uInput == "settings"):
 			while True:
 				# Settings Scope
@@ -72,9 +83,6 @@ class cmdHandler(object):
 		else:
 			print(f"\"{self.uInput}\" is not a command")
 		return None
-
-	def _prfileHandling(self: object) -> None:
-		pass
 
 
 class _modFileSubClass(object):
@@ -93,13 +101,16 @@ class _modFileSubClass(object):
 				print(f"{printStr}")
 		return None
 
-	def getModFiles(self: object) -> dict[int]:
+	def getModFiles(self: object, path: str) -> dict[int]:
+		"""
+		Gets the mods from the CK2 mod folder\n
+		:param path: str\n
+		:param self: object\n
+		:return: dict[int]
+		"""
 		res: dict
 		files: list[str]
 		count = 1
-		with open("../bin/initSettings.json", "r") as r:
-			data = json.load(r)
-			path = data["ck2path"]
 		for _, _, file in os.walk(path):
 			files = file
 		for file in files:
@@ -112,11 +123,19 @@ class _commitSubClass(object):
 	"""
 	Internal commitment handler for cmdHandler, used when writing profiles to setting.txt
 	"""
-	def _parseUserInput(self: object, uInput: str) -> list[str]:
-		self.profile = uInput
-		pass
+	def commitProfile(self: object, profileName: str, gamePath: str) -> None:
+		"""
+		When called, commits the given profile
+		:param profileName: str\n
+		:param gamePath: str\n
+		:param self: object\n
+		:return: None
+		"""
+		mods = self._getProfileMods(profileName)
+		self.CK2Object = CK2Handler(gamePath, mods)
+		self.CK2Object.writeProfile()
 
-	def _getProfileMods(self: object) -> list[str]:
+	def _getProfileMods(self: object, profileName: str) -> list[str]:
 		"""
 		Gets the mods from a specific profile\n
 		:param self: object\n
@@ -124,7 +143,7 @@ class _commitSubClass(object):
 		"""
 		with open("../bin/profiles.json", 'r') as r:
 			data = json.load(r)
-			profileMods = data[self.profile]
+			profileMods = data[profileName]
 			r.close()
 		return profileMods
 
@@ -137,7 +156,8 @@ class _settingsSubClass(object):
 
 
 class _profileSubClass(object):
-	def __init__(self: object):
+	def __init__(self: object, gamePath: str):
+		self.path = gamePath
 		self.profileH = profileHandler()
 		self.modFileSubClass = _modFileSubClass()
 
@@ -149,7 +169,7 @@ class _profileSubClass(object):
 		:return: None
 		"""
 		res: list[str] = []
-		data  = self.modFileSubClass.getModFiles()
+		data  = self.modFileSubClass.getModFiles(self.path)
 		for key in data.keys():
 			mod = data[key][:data[key].index('.mod')]
 			print(f"{key}: {mod}")
@@ -169,7 +189,7 @@ class _profileSubClass(object):
 		"""
 		while True:
 			res: list[str] = []
-			data  = self.modFileSubClass.getModFiles()
+			data  = self.modFileSubClass.getModFiles(self.path)
 			for key in data.keys():
 				mod = data[key][:data[key].index('.mod')]
 				print(f"{key}: {mod}")
@@ -208,4 +228,19 @@ class _profileSubClass(object):
 			print(f"{profileName} has been deleted")
 		except self.profileH.InvalidProfileError as e:
 			print(e.asString())
+		return None
+
+	def showProfile(self: object) -> None:
+		"""
+		Showes all the available profiles\n
+		:param self: object\n
+		:return: None
+		"""
+		with open("../bin/profile.json", 'r') as r:
+			data = json.load(r)
+			keys = data["present"]
+			for key in keys:
+				print(key)
+				misc.printList(data[key])
+			r.close()
 		return None

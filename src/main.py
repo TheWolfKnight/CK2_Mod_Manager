@@ -39,7 +39,7 @@ def onOpne() -> None:
 
 def main() -> None:
 	# onOpne()
-	cmd = cmdHandler()
+	cmd = cmdHandler(CK2PATH)
 	cmd.getCommand()
 	return None
 
