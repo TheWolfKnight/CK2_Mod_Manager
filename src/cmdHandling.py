@@ -141,11 +141,8 @@ class _commitSubClass(object):
 		:param self: object\n
 		:return: list[str]
 		"""
-		with open("../bin/profiles.json", 'r') as r:
-			data = json.load(r)
-			profileMods = data[profileName]
-			r.close()
-		return profileMods
+		data = misc.getData("../bin/profiles.json")
+		return data[profileName]
 
 
 class _settingsSubClass(object):
@@ -236,11 +233,9 @@ class _profileSubClass(object):
 		:param self: object\n
 		:return: None
 		"""
-		with open("../bin/profile.json", 'r') as r:
-			data = json.load(r)
-			keys = data["present"]
-			for key in keys:
-				print(key)
-				misc.printList(data[key])
-			r.close()
+		data = misc.getData("../bin/profile.json")
+		keys = data["present"]
+		for key in keys:
+			print(key)
+			misc.printList(data[key])
 		return None

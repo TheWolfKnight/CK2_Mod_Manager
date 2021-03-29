@@ -1,10 +1,9 @@
-import sys, itertools
-from misc import printList
+import sys
+import tkinter as tk
 
 
 def main():
-	li = [1,2,3,4,5,6,7,8,9]
-	printList(li)
+	pass
 
 if __name__ == "__main__":
 	main()

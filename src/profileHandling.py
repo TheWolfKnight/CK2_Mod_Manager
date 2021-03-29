@@ -1,4 +1,4 @@
-import os, json
+import os, json, misc
 
 
 class Error(Exception):
@@ -21,9 +21,7 @@ class profileHandler(object):
 		:param mods: list[str], list of mods for the new profile\n
 		:return: None
 		"""
-		with open("../bin/profiles.json", 'r') as jFile:
-			data = json.load(jFile)
-			jFile.close()
+		data = misc.getData("../bin/profiles.json")
 
 		with open("../bin/profiles.json", 'w') as jFile:
 			if (profileName in data["present"]):
@@ -45,9 +43,7 @@ class profileHandler(object):
 		:param remove (optional): list[str], mods to remove from profile\n
 		:return: None
 		"""
-		with open("../bin/profiles.json", 'r') as jFile:
-			data = json.load(jFile)
-			jFile.close()
+		data = misc.getData("../bin/profiles.json")
 
 		try:
 			data["present"].index(profileName)
@@ -77,9 +73,7 @@ class profileHandler(object):
 		:return: True if (success) else false
 		"""
 		res = {}
-		with open("../bin/profiles.json", 'r') as jFile:
-			data = json.load(jFile)
-			jFile.close()
+		data = misc.getData("../bin/profiles.json")
 
 		try:
 			data["present"].index(profileName)
