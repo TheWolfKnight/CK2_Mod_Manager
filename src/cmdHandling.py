@@ -1,6 +1,7 @@
 import os, json, misc
 from ck2FileHandling import CK2Handler
 from profileHandling import profileHandler
+from pathlib import Path
 
 
 INFOMESSAGE = """Profile - open profile editor\nCommit - Enable a profile\nSettings - Change setting for the program\nquit - closes the program"""
@@ -15,7 +16,6 @@ class cmdHandler(object):
 		self.commitClassHandler = _commitSubClass(gamePath)
 		self.settingsClassHandler = _settingsSubClass()
 		self.profileClassHandler = _profileSubClass(gamePath)
-		self.path = gamePath
 		self.uInput: str
 		self.breakFlag = False
 		self.mainLoopFlag = True
@@ -69,7 +69,7 @@ class cmdHandler(object):
 				if (self.uInput == "quit"):
 					break
 				elif (token[0] == "commit"):
-					self.commitClassHandler.commitProfile(token[1], self.path)
+					self.commitClassHandler.commitProfile(token[1])
 				elif (token[0] == "show" and token[1] == "profile"):
 					self.profileClassHandler.showProfile()
 				else:
@@ -78,8 +78,15 @@ class cmdHandler(object):
 			while True:
 				# Settings Scope
 				self.uInput = input("> ").lower()
+				token = self.uInput.split(' ')
 				if (self.uInput == "quit"):
 					break
+				elif (token[0] == "show" and token[1] == "settings"):
+					self.settingsClassHandler.showSettings()
+				elif (token[0] == "change" and token[1] == "settings"):
+					self.settingsClassHandler.changeSettings()
+				else:
+					print("Invalid input")
 		else:
 			print(f"\"{self.uInput}\" is not a command")
 		return None
@@ -101,20 +108,17 @@ class _modFileSubClass(object):
 				print(f"{printStr}")
 		return None
 
-	def getModFiles(self: object, path: str) -> dict[int]:
+	def getModFiles(self: object, path: str) -> dict[int, str]:
 		"""
 		Gets the mods from the CK2 mod folder\n
 		:param path: str\n
 		:param self: object\n
 		:return: dict[int]
 		"""
-		res: dict
-		files: list[str]
+		res: dict[int, str]
 		count = 1
-		for _, _, file in os.walk(path):
-			files = file
-		for file in files:
-			res[str(count)] = file
+		for file in Path(f"{path}/mod").rglob("*.mod"):
+			res[count] = file
 			count += 1
 		return res
 
@@ -123,7 +127,10 @@ class _commitSubClass(object):
 	"""
 	Internal commitment handler for cmdHandler, used when writing profiles to setting.txt
 	"""
-	def commitProfile(self: object, profileName: str, gamePath: str) -> None:
+	def __init__(self: object, gamePath: str):
+		self.path = gamePath
+
+	def commitProfile(self: object, profileName: str) -> None:
 		"""
 		When called, commits the given profile
 		:param profileName: str\n
@@ -132,7 +139,7 @@ class _commitSubClass(object):
 		:return: None
 		"""
 		mods = self._getProfileMods(profileName)
-		self.CK2Object = CK2Handler(gamePath, mods)
+		self.CK2Object = CK2Handler(self.path, mods)
 		self.CK2Object.writeProfile()
 
 	def _getProfileMods(self: object, profileName: str) -> list[str]:
@@ -149,12 +156,39 @@ class _settingsSubClass(object):
 	"""
 	Internal settings handler for the cmdHandler, used when changing settings in initSettings.json
 	"""
-	pass
+	def showSettings(self: object) -> None:
+		"""
+		Prints the list of settings\n
+		:param self: object\n
+		:return: None
+		"""
+		data = misc.getData("../bin/initSettings.json")
+		for key in data.keys():
+			print(f"{key}: {data[key]}")
+		return None
+
+	def changeSettings(self: object) -> None:
+		"""
+		Changes a given setting\n
+		:param self: object\n
+		:return: None
+		"""
+		data = misc.getData("../bin/initSettings.json")
+		uInput = input("Settings >>> ").lower()
+		token = uInput.split(' ')
+		try:
+			key = data.keys()[data.keys().index(token[0])]
+			data[key] = token[1]
+		except ValueError:
+			print("No setting by that name")
+		print("Setting changed")
+		return None
 
 
 class _profileSubClass(object):
 	def __init__(self: object, gamePath: str):
-		self.path = gamePath
+		self.path = "../bin/profiles.json"
+		self.gamePath = gamePath
 		self.profileH = profileHandler()
 		self.modFileSubClass = _modFileSubClass()
 
@@ -166,7 +200,7 @@ class _profileSubClass(object):
 		:return: None
 		"""
 		res: list[str] = []
-		data  = self.modFileSubClass.getModFiles(self.path)
+		data  = self.modFileSubClass.getModFiles("%UserProfile%/Documents/Paradox Interactive/Crusader Kings II") #self.gamePath
 		for key in data.keys():
 			mod = data[key][:data[key].index('.mod')]
 			print(f"{key}: {mod}")

@@ -31,10 +31,7 @@ class fileHandler(object):
 		:return: list[str]
 		"""
 		res: list = []
-		files: list
-		for _, _, file in os.walk(f"{self.path}/mod"):
-			files = file
-		for file in files:
+		for file in os.listdir(f"{self.path}/mod"):
 			if (file.endswith(".mod")):
 				res.append(file)
 		return res
@@ -46,14 +43,11 @@ class fileHandler(object):
 		:retun: None
 		"""
 		for file in BASEFILES_CONST:
-			if (file == "initSettings.json"):
-				print("initSettings")
+			if (file == BASEFILES_CONST[1]):
 				self.BckUpHandler._createInitSettings()
-			if (file == "initCK2SettingsBackup.txt"):
-				print("InitCK2Backup")
+			if (file == BASEFILES_CONST[2]):
 				self.BckUpHandler._backupBaseSettings()
-			if (file == "profiles.json"):
-				print("profiles")
+			if (file == BASEFILES_CONST[0]):
 				self.BckUpHandler._profilesInitSettings()
 		return None
 
@@ -83,13 +77,13 @@ class _BackupHandler(object):
 		:param self: object\n
 		:return: None
 		"""
-		with open(f"../bin/{BASEFILES_CONST[1]}", 'w') as jFile:
+		with open(f"../bin/{BASEFILES_CONST[1]}", 'w') as w:
 			data = {
-				"firtRunFlag": False,
+				"firstRunFlag": True,
 				"ck2path": "../tmp"
 			}
-			json.dump(data, jFile)
-			jFile.close()
+			json.dump(data, w)
+			w.close()
 		return None
 
 	def _profilesInitSettings(self: object) -> None:
@@ -98,10 +92,10 @@ class _BackupHandler(object):
 		:param self: object\n
 		:return: None
 		"""
-		with open(f"../bin/{BASEFILES_CONST[0]}", 'w') as jFile:
+		with open(f"../bin/{BASEFILES_CONST[0]}", 'w') as w:
 			data = {
 				"present": []
 			}
-			json.dump(data, jFile)
-			jFile.close()
+			json.dump(data, w)
+			w.close()
 		return None

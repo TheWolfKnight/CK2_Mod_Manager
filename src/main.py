@@ -1,36 +1,35 @@
-import os, json, sys
+import os, json, sys, misc
 from fileHandling import fileHandler
 from cmdHandling import cmdHandler
 
 
-CK2PATH: str
+CK2PATH: str = None
 
 
 def readBaseSettings() -> (dict, bool):
 	if (os.path.isfile("../bin/initSettings.json")):
 		with open("../bin/initSettings.json", 'r') as r:
-			data: dict = json.load(r.read())
+			data: dict = json.load(r)
 			r.close()
 		return data, True
 	else:
 		return None, False
 
 def setFRF() -> None:
+	data = misc.getData("../bin/initSettings.json")
+	data["firstRunFlag"] = False
 	with open("../bin/initSettings.json", 'w') as w:
-		with open("../bin/initSettings.json", 'r') as r:
-			data = json.load(r.read())
-			data["firstRunPath"] = False
-			r.close()
 		json.dump(data, w)
 		w.close()
 	return None
 
-def onOpne() -> None:
+def onOpen() -> None:
+	global CK2PATH
 	settings, initPressent = readBaseSettings()
 	if ((settings is None) or not settings["firstRunFlag"] or not initPressent):
-		CK2PATH = settings["ck2path"]
-		baseFileHandler = fileHandler(CK2PATH)
+		baseFileHandler = fileHandler("../tmp")
 		baseFileHandler.baseFileHandler()
+		CK2PATH = "../tmp"
 		setFRF()
 		return None
 	else:
@@ -38,7 +37,7 @@ def onOpne() -> None:
 		return None
 
 def main() -> None:
-	# onOpne()
+	onOpen()
 	cmd = cmdHandler(CK2PATH)
 	cmd.getCommand()
 	return None
