@@ -8,9 +8,9 @@ class fileHandler(object):
 	"""
 	Handles the creation and managment of base files, not necessarily their contents
 	"""
-	def __init__(self: object, path: str):
-		self.path = path
-		self.BckUpHandler = _BackupHandler(path)
+	def __init__(self: object):
+		self.path = self._getModFilePath()
+		self.BckUpHandler = _BackupHandler(self.path)
 
 	def baseFileHandler(self: object) -> None:
 		"""
@@ -35,6 +35,16 @@ class fileHandler(object):
 			if (file.endswith(".mod")):
 				res.append(file)
 		return res
+
+	def _getModFilePath(self: object) -> str:
+		while True:
+			print("Path is usually fund in dockuments folder under \"Paradox Interactiv\"")
+			uInput = input("Path to CK2 root folder > ")
+			isDir = True if os.path.isdir(uInput) else False
+			if (isDir):
+				return uInput
+			else:
+				print("Not a valid path")
 
 	def _writeBaseData(self: object) -> None:
 		"""
@@ -80,7 +90,7 @@ class _BackupHandler(object):
 		with open(f"../bin/{BASEFILES_CONST[1]}", 'w') as w:
 			data = {
 				"firstRunFlag": True,
-				"ck2path": "../tmp"
+				"ck2path": str(self.path)
 			}
 			json.dump(data, w)
 			w.close()

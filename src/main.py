@@ -26,10 +26,10 @@ def setFRF() -> None:
 def onOpen() -> None:
 	global CK2PATH
 	settings, initPressent = readBaseSettings()
-	if ((settings is None) or not settings["firstRunFlag"] or not initPressent):
-		baseFileHandler = fileHandler("../tmp")
+	if ((settings is None) or (settings["firstRunFlag"]) or (not initPressent)):
+		baseFileHandler = fileHandler()
 		baseFileHandler.baseFileHandler()
-		CK2PATH = "../tmp"
+		CK2PATH = baseFileHandler.path
 		setFRF()
 		return None
 	else:

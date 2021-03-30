@@ -1,4 +1,4 @@
-import os, json, misc
+import os, json, misc, sys
 from ck2FileHandling import CK2Handler
 from profileHandling import profileHandler
 from pathlib import Path
@@ -115,11 +115,15 @@ class _modFileSubClass(object):
 		:param self: object\n
 		:return: dict[int]
 		"""
-		res: dict[int, str]
+		res: dict[int, str] = {}
+		files: list[str] = []
 		count = 1
-		for file in Path(f"{path}/mod").rglob("*.mod"):
-			res[count] = file
-			count += 1
+		for _, _, file in os.walk(f"{path}/mod"):
+			files = file
+		for file in files:
+			if (file.endswith(".mod")):
+				res[str(count)] = file
+				count += 1
 		return res
 
 
@@ -200,7 +204,7 @@ class _profileSubClass(object):
 		:return: None
 		"""
 		res: list[str] = []
-		data  = self.modFileSubClass.getModFiles("%UserProfile%/Documents/Paradox Interactive/Crusader Kings II") #self.gamePath
+		data  = self.modFileSubClass.getModFiles(self.gamePath)
 		for key in data.keys():
 			mod = data[key][:data[key].index('.mod')]
 			print(f"{key}: {mod}")
