@@ -1,10 +1,15 @@
 import os, json, misc, sys
 from ck2FileHandling import CK2Handler
 from profileHandling import profileHandler
-from pathlib import Path
+from subprocess import call
 
 
 INFOMESSAGE = """Profile - open profile editor\nCommit - Enable a profile\nSettings - Change setting for the program\nquit - closes the program"""
+
+
+def CLEAR() -> None:
+	_ = call('clear' if os.name == "posix" else 'cls')
+	return None
 
 
 class cmdHandler(object):
@@ -27,6 +32,7 @@ class cmdHandler(object):
 		:return: None
 		"""
 		while True:
+			CLEAR()
 			if (self.breakFlag):
 				print("Closing Program")
 				break
@@ -108,14 +114,14 @@ class _modFileSubClass(object):
 				print(f"{printStr}")
 		return None
 
-	def getModFiles(self: object, path: str) -> dict[int, str]:
+	def getModFiles(self: object, path: str) -> dict[str, str]:
 		"""
 		Gets the mods from the CK2 mod folder\n
 		:param path: str\n
 		:param self: object\n
-		:return: dict[int]
+		:return: dict[str, str]
 		"""
-		res: dict[int, str] = {}
+		res: dict[str, str] = {}
 		files: list[str] = []
 		count = 1
 		for _, _, file in os.walk(f"{path}/mod"):
@@ -178,8 +184,7 @@ class _settingsSubClass(object):
 		:return: None
 		"""
 		data = misc.getData("../bin/initSettings.json")
-		uInput = input("Settings >>> ").lower()
-		token = uInput.split(' ')
+		token = input("Settings >>> ").lower().split(' ')
 		try:
 			key = data.keys()[data.keys().index(token[0])]
 			data[key] = token[1]
@@ -203,6 +208,7 @@ class _profileSubClass(object):
 		:param profileName: str\n
 		:return: None
 		"""
+		CLEAR()
 		res: list[str] = []
 		data  = self.modFileSubClass.getModFiles(self.gamePath)
 		for key in data.keys():
@@ -210,45 +216,33 @@ class _profileSubClass(object):
 			print(f"{key}: {mod}")
 		print("select wanted mod, format: 1, 2, 3")
 		selectedMods = input("Profile >>> ").strip().split(',')
-		for mod in selectedMods:
-			res.append(data[mod])
-		self.profileH.createProfile(profileName, res)
+		try:
+			for mod in selectedMods:
+				res.append(data[mod])
+			self.profileH.createProfile(profileName, res)
+		except Exception:
+			print("Invalid input")
 		return None
 
-	def editProfile(self: object, profileName: str) -> None:
+	def editProfile(self: object, profileName: str, setting: str = None) -> None:
 		"""
 		Enables the user to edit the profile, by trapping in a new while True loop\n
 		:param self: object\n
 		:param profileName: str\n
 		:return: None
 		"""
-		while True:
-			res: list[str] = []
-			data  = self.modFileSubClass.getModFiles(self.path)
-			for key in data.keys():
-				mod = data[key][:data[key].index('.mod')]
-				print(f"{key}: {mod}")
-			print("Syntax: add/remove 1, 2, 3")
-			uInput = input("Profile >>> ").lower()
-			try:
-				if (uInput == "quit"):
-					break
-				elif (uInput == "add"):
-					selectedmods = uInput.remove(2).strip().split(',')
-					for mod in selectedmods:
-						res.append(mod)
-					self.profileH.editProfile(profileName, add=selectedmods)
-					res = []
-				elif (uInput == "remove"):
-					selectedmods = uInput.remove(2).strip().split(',')
-					for mod in selectedmods:
-						res.append(mod)
-					self.profileH.editProfile(profileName, remove=selectedmods)
-					res = []
-				else:
-					print("Invalid input")
-			except self.profileH.InvalidProfileError as e:
-				print(e.asString())
+		CLEAR()
+		if (setting is None):
+			print("No setting given")
+			return None
+		setting = setting.lower()
+		if (setting == "add"):
+			self._addMod(profileName)
+		elif (setting == "remove"):
+			self._removeMod(profileName)
+		else:
+			print("Not a valid input")
+			return None
 		return None
 
 	def deleteProfile(self: object, profileName: str) -> None:
@@ -276,4 +270,59 @@ class _profileSubClass(object):
 		for key in keys:
 			print(key)
 			misc.printList(data[key])
+		return None
+
+	def _addMod(self: object, profileName: str) -> None:
+		"""
+		Subcontracted add mod operation for the edit profile module\n
+		:param profileName: str\n
+		:param self: object\n
+		:return: None
+		"""
+		CLEAR()
+		res: list[str] = []
+		modData: dict[str, str] = {}
+		data = self.modFileSubClass.getModFiles(self.path)
+		count = 1
+		for mod in data:
+			modData[count] = mod
+			print(f"{count}: {mod[:mod.index('.mod')]}")
+			count += 1
+		print("syntax: 1, 2, 3, 4, 5, 6")
+		tokens = input("Add >>> ").strip().split(' ')
+		for token in tokens:
+			if (token.isdigit()):
+				res.append(modData[token])
+				continue
+			else:
+				print(f"{token} failed to pass digit check")
+			self.profileH.editProfile(profileName, add=res)
+		return None
+
+	def _removeMod(self: object, profileName: str) -> None:
+		"""
+		Subcontracted remove mod for the edit profile module\n
+		:param profileName: str\n
+		:param self: object\n
+		:return: None
+		"""
+		CLEAR()
+		res: list[str] = []
+		modData: dict[str, str] = {}
+		initData: list[str] = misc.getData("../bin/profile.json")[profileName]
+
+		count = 1
+		for mod in initData:
+			print(f"{count}: {mod[:mod.index('.mod')]}")
+			modData[count] = mod
+			count += 1
+		print("syntax: 1, 2, 3, 4, 5, 6")
+		tokens = input("Remove >>> ").strip().split(' ')
+		for token in tokens:
+			if (token.isdigit()):
+				res.append(modData[token])
+				continue
+			else:
+				print(f"{token} failed to pass digit check")
+			self.profileH.editProfile(profileName, remove=res)
 		return None

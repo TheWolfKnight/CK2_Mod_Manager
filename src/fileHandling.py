@@ -40,8 +40,9 @@ class fileHandler(object):
 		while True:
 			print("Path is usually fund in dockuments folder under \"Paradox Interactiv\"")
 			uInput = input("Path to CK2 root folder > ")
-			isDir = True if os.path.isdir(uInput) else False
-			if (isDir):
+			isDir = True if os.path.isfile(f"{uInput}/settings.txt") else False
+			isModDir = True if os.path.isdir(f"{uInput}/mod") else False
+			if (isDir and isModDir):
 				return uInput
 			else:
 				print("Not a valid path")
