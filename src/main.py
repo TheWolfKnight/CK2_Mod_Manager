@@ -47,7 +47,7 @@ if __name__ == "__main__":
 	try:
 		main()
 	except KeyboardInterrupt:
-		print("Shutting down")
+		print("\nShutting down")
 	except EOFError:
-		print("Shutting down")
+		print("\nShutting down")
 	sys.exit()

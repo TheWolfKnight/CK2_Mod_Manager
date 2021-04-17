@@ -1,14 +1,13 @@
 import os, json, misc, sys
 from ck2FileHandling import CK2Handler
 from profileHandling import profileHandler
-from subprocess import call
 
 
 INFOMESSAGE = """Profile - open profile editor\nCommit - Enable a profile\nSettings - Change setting for the program\nquit - closes the program"""
 
 
 def CLEAR() -> None:
-	_ = call('clear' if os.name == "posix" else 'cls')
+	os.system("cls")
 	return None
 
 
@@ -50,7 +49,8 @@ class cmdHandler(object):
 		if (self.uInput == "quit"):
 			self.breakFlag = True
 		elif (self.uInput == "profile"):
-			print("Create Profile <Name> - Make a new profile\nEdit Profile <Name> - eddit a profile\nDelete Profile <Name> - Deletes a profile\nquit - Goes back")
+			CLEAR()
+			print("Create Profile <Name> - Make a new profile\nEdit Profile <Name> <Add/Remove> - edit a profile\nDelete Profile <Name> - Deletes a profile\nquit - Goes back")
 			while True:
 				# Profile scope
 				self.uInput = input(">>> ").lower()
@@ -60,7 +60,7 @@ class cmdHandler(object):
 				if (token[0] == "create" and token[1] == "profile"):
 					self.profileClassHandler.createProfile(token[2])
 				elif (token[0] == "edit" and token[1] == "profile"):
-					self.profileClassHandler.editProfile(token[2])
+					self.profileClassHandler.editProfile(token[2], token[3])
 				elif (token[0] == "delete" and token[1] == "profile"):
 					self.profileClassHandler.deleteProfile(token[2])
 				elif (token[0] == "show" and token[1] == "profile"):
@@ -68,6 +68,8 @@ class cmdHandler(object):
 				else:
 					print("Invalid input")
 		elif (self.uInput == "commit"):
+			CLEAR()
+			print("TO BE DONE")
 			while True:
 				# Commit Scope
 				self.uInput = input("> ").lower()
@@ -81,6 +83,8 @@ class cmdHandler(object):
 				else:
 					print("Invalid input")
 		elif (self.uInput == "settings"):
+			CLEAR()
+			print("TO BE DONE")
 			while True:
 				# Settings Scope
 				self.uInput = input("> ").lower()
@@ -142,7 +146,7 @@ class _commitSubClass(object):
 
 	def commitProfile(self: object, profileName: str) -> None:
 		"""
-		When called, commits the given profile
+		When called, commits the given profile\n
 		:param profileName: str\n
 		:param gamePath: str\n
 		:param self: object\n
@@ -215,7 +219,10 @@ class _profileSubClass(object):
 			mod = data[key][:data[key].index('.mod')]
 			print(f"{key}: {mod}")
 		print("select wanted mod, format: 1, 2, 3")
-		selectedMods = input("Profile >>> ").strip().split(',')
+		selectedMods = input("Profile >>> ").split(',')
+		for i, token in enumerate(tokens):
+			token = token.strip()
+			tokens[i] = token
 		try:
 			for mod in selectedMods:
 				res.append(data[mod])
@@ -281,21 +288,21 @@ class _profileSubClass(object):
 		"""
 		CLEAR()
 		res: list[str] = []
-		modData: dict[str, str] = {}
-		data = self.modFileSubClass.getModFiles(self.path)
-		count = 1
-		for mod in data:
-			modData[count] = mod
-			print(f"{count}: {mod[:mod.index('.mod')]}")
-			count += 1
+		data = self.modFileSubClass.getModFiles(self.gamePath)
+		for key in data.keys():
+			mod = data[key]
+			print(f"{key}: {mod[:mod.index('.mod')]}")
 		print("syntax: 1, 2, 3, 4, 5, 6")
-		tokens = input("Add >>> ").strip().split(' ')
+		tokens = input("Add >>> ").split(',')
+		for i, token in enumerate(tokens):
+			token = token.strip()
+			tokens[i] = token
 		for token in tokens:
-			if (token.isdigit()):
-				res.append(modData[token])
+			if (token.isdigit() and str(token) in data.keys()):
+				res.append(data[str(token)])
 				continue
 			else:
-				print(f"{token} failed to pass digit check")
+				print(f"{token} failed to pass digit/key check")
 			self.profileH.editProfile(profileName, add=res)
 		return None
 
@@ -310,19 +317,21 @@ class _profileSubClass(object):
 		res: list[str] = []
 		modData: dict[str, str] = {}
 		initData: list[str] = misc.getData("../bin/profile.json")[profileName]
-
 		count = 1
 		for mod in initData:
 			print(f"{count}: {mod[:mod.index('.mod')]}")
 			modData[count] = mod
 			count += 1
 		print("syntax: 1, 2, 3, 4, 5, 6")
-		tokens = input("Remove >>> ").strip().split(' ')
+		tokens = input("Remove >>> ").split(',')
+		for i, token in enumerate(tokens):
+			token = token.strip()
+			tokens[i] = token
 		for token in tokens:
-			if (token.isdigit()):
+			if (token.isdigit() and token in modData.keys()):
 				res.append(modData[token])
 				continue
 			else:
-				print(f"{token} failed to pass digit check")
+				print(f"{token} failed to pass digit/key check")
 			self.profileH.editProfile(profileName, remove=res)
 		return None
