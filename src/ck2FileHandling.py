@@ -56,11 +56,9 @@ class CK2Handler(object):
 				for line in r.readlines():
 					if (modLine is not None):
 						if (count <= modLine+3):
-							print("skip")
 							count += 1
 							continue
 					if (line == "last_mods=\n"):
-						print("last_mods reached")
 						w.write(line)
 						modLine = self._createModString()
 						w.write(modLine)
@@ -68,7 +66,6 @@ class CK2Handler(object):
 						count += 1
 						continue
 					else:
-						print("write normal line")
 						w.write(line)
 						count += 1
 						continue
